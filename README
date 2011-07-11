@@ -1,6 +1,3 @@
-$Id: README,v 1.1.1.1 2008/03/25 19:58:15 sullrich Exp $
-You can find all the available documentation on
-
-- http://wiki.freesbie.org/documentation
-
-Feel free to improve it or send comments to staff@freesbie.org
+This is a customized version of FreeSBIE originally
+customized to pfSense by Dario Freni now maintained
+by Scott Ullrich.
