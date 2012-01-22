@@ -43,7 +43,7 @@ cd $SRCDIR
 
 unset EXTRA
 
-makeargs="${MAKEOPT:-} ${MAKEJ_WORLD:-} ${MAKE_CONF} NO_CLEAN=yes SRCCONF=${SRC_CONF} TARGET=${ARCH} TARGET_ARCH=${ARCH} LOADER_ZFS_SUPPORT=YES"
+makeargs="${MAKEOPT:-} ${MAKEJ_WORLD:-} ${MAKE_CONF} NO_CTF=yo NO_SHARE=yo NO_CLEAN=yes SRCCONF=${SRC_CONF} TARGET=${ARCH} TARGET_ARCH=${ARCH} LOADER_ZFS_SUPPORT=YES"
 
 if [ "$ARCH" = "mips" ]; then
 	echo ">>> Building includes for ${ARCH} architecture..."
@@ -54,6 +54,6 @@ fi
 
 echo ">>> Building world for ${ARCH} architecture..."
 echo ">>> FreeSBIe2 is running the command: env $MAKE_ENV script -aq $LOGFILE make ${makeargs:-} buildworld" >> /tmp/freesbie_buildworld_cmd.txt
-(env $MAKE_ENV script -aq $LOGFILE make ${makeargs:-} buildworld NO_CLEAN=yo || print_error;) | egrep '^>>>'
+(env $MAKE_ENV script -aq $LOGFILE make ${makeargs:-} buildworld NO_CTF=yo NO_SHARE=yo NO_CLEAN=yo || print_error;) | egrep '^>>>'
 
 cd $LOCALDIR
