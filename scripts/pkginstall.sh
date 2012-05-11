@@ -144,7 +144,7 @@ copy_packages() {
     export PACKAGE_BUILDING=yo
     chrootpkgpath=${CHROOTWD#$BASEDIR}
     pkgfile=${WORKDIR}/sortpkg
-    pkgaddcmd="chroot ${BASEDIR} pkg_add -v"
+    pkgaddcmd="chroot ${BASEDIR} pkg_add -fv"
     totpkg=$(wc -l $pkgfile | awk '{print $1}')
     echo ">>> Copying ${totpkg} packages"
     cd ${CHROOTWD}
