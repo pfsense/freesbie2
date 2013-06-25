@@ -57,7 +57,7 @@ makeargs="${MAKEOPT:-} ${MAKEJ_KERNEL:-} ${MAKE_CONF} SRCCONF=${SRC_CONF} TARGET
 
 echo ">>> FreeSBIe2 is running the command: env $MAKE_ENV script -aq $LOGFILE make ${makeargs:-} installkernel ${DTRACE}"  > /tmp/freesbie_installkernel_cmd.txt
 
-(env $MAKE_ENV script -aq $LOGFILE make ${makeargs:-} installkernel || print_error;) | egrep '^>>>'
+(env "$MAKE_ENV" script -aq $LOGFILE make ${makeargs:-} installkernel || print_error;) | egrep '^>>>'
 
 gzip -f9 $KERNEL_DESTDIR/boot/kernel/kernel
 

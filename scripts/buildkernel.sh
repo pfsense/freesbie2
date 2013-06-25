@@ -80,7 +80,7 @@ makeargs="${MAKEOPT:-} SRCCONF=${SRC_CONF} ${MAKE_CONF} NO_KERNELCLEAN=yes TARGE
 if [ "$ARCH" = "MIPS" ]; then
 	echo ">>> FreeSBIe2 is running the command: env $MAKE_ENV script -aq $LOGFILE make ${makeargs:-} kernel-toolchain" > /tmp/freesbie_buildworld_cmd.txt
 	echo ">>> MIPS ARCH deteceted, running make kernel-toolchain ..."
-	(env $MAKE_ENV script -aq $LOGFILE make $makeargs kernel-toolchain $MAKEJ_KERNEL || print_error;) | egrep '^>>>'
+	(env "$MAKE_ENV" script -aq $LOGFILE make $makeargs kernel-toolchain $MAKEJ_KERNEL || print_error;) | egrep '^>>>'
 fi
 
 echo ">>> FreeSBIe2 is running the command: env $MAKE_ENV script -aq $LOGFILE make $makeargs buildkernel" \
@@ -98,7 +98,7 @@ else
 	COUNTER=9
 fi
 while [ "$COUNTER" -lt 10 ]; do
-	(env $MAKE_ENV script -aq $LOGFILE make $makeargs buildkernel $MAKEJ_KERNEL NO_KERNELCLEAN=yo || print_error;) | egrep '^>>>'
+	(env "$MAKE_ENV" script -aq $LOGFILE make $makeargs buildkernel $MAKEJ_KERNEL NO_KERNELCLEAN=yo || print_error;) | egrep '^>>>'
 	if [ "$?" -gt 0 ]; then
 		if [ "$COUNTER" -gt 9 ]; then
 			exit 1
