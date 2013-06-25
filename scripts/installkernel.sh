@@ -25,6 +25,14 @@ if [ -z "${SRC_CONF:-}" ]; then
     fi
 fi
 
+# Set __MAKE_CONF variable if it's not already set.
+if [ -z "${MAKE_CONF:-}" ]; then
+        MAKE_CONF=""
+else
+        MAKE_CONF="__MAKE_CONF=$MAKE_CONF"
+        echo ">>> Setting MAKE_CONF to $MAKE_CONF"
+fi
+
 if [ -n "${KERNELCONF:-}" ]; then
     export KERNCONFDIR=$(dirname ${KERNELCONF})
     export KERNCONF=$(basename ${KERNELCONF})
@@ -45,7 +53,7 @@ else
 	DTRACE=" WITH_CTF=1"
 fi
 
-makeargs="${MAKEOPT:-} ${MAKEJ_KERNEL:-} SRCCONF=${SRC_CONF} TARGET_ARCH=${ARCH} DESTDIR=${KERNEL_DESTDIR}"
+makeargs="${MAKEOPT:-} ${MAKEJ_KERNEL:-} ${MAKE_CONF} SRCCONF=${SRC_CONF} TARGET_ARCH=${ARCH} DESTDIR=${KERNEL_DESTDIR}"
 
 echo ">>> FreeSBIe2 is running the command: env $MAKE_ENV script -aq $LOGFILE make ${makeargs:-} installkernel ${DTRACE}"  > /tmp/freesbie_installkernel_cmd.txt
 

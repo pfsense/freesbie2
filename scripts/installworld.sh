@@ -32,11 +32,19 @@ if [ -z "${SRC_CONF:-}" ]; then
     fi
 fi
 
+# Set __MAKE_CONF variable if it's not already set.
+if [ -z "${MAKE_CONF:-}" ]; then
+        MAKE_CONF=""
+else
+        MAKE_CONF="__MAKE_CONF=$MAKE_CONF"
+        echo ">>> Setting MAKE_CONF to $MAKE_CONF"
+fi
+
 mkdir -p ${BASEDIR}
 
 cd ${SRCDIR}
 
-makeargs="${MAKEOPT:-} ${MAKEJ_WORLD:-} SRCCONF=${SRC_CONF} TARGET_ARCH=${ARCH} DESTDIR=${BASEDIR} LOADER_ZFS_SUPPORT=YES"
+makeargs="${MAKEOPT:-} ${MAKEJ_WORLD:-} ${MAKE_CONF} SRCCONF=${SRC_CONF} TARGET_ARCH=${ARCH} DESTDIR=${BASEDIR} LOADER_ZFS_SUPPORT=YES"
 
 echo ">>> FreeSBIe2 is running the command: env $MAKE_ENV script -aq $LOGFILE make ${makeargs:-} installworld" > /tmp/freesbie_installworld_cmd.txt
 
