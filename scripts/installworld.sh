@@ -44,7 +44,7 @@ mkdir -p ${BASEDIR}
 
 cd ${SRCDIR}
 
-makeargs="${MAKEOPT:-} ${MAKEJ_WORLD:-} ${MAKE_CONF} SRCCONF=${SRC_CONF} TARGET_ARCH=${ARCH} DESTDIR=${BASEDIR} LOADER_ZFS_SUPPORT=YES"
+makeargs="${MAKEOPT:-} ${MAKEJ_WORLD:-} ${MAKE_CONF} SRCCONF=${SRC_CONF} TARGET_ARCH=${ARCH} DESTDIR=${BASEDIR}"
 
 echo ">>> FreeSBIe2 is running the command: env $MAKE_ENV script -aq $LOGFILE make ${makeargs:-} installworld" > /tmp/freesbie_installworld_cmd.txt
 

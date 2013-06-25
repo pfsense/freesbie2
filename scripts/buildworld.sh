@@ -43,7 +43,7 @@ cd $SRCDIR
 
 unset EXTRA
 
-makeargs="${MAKEOPT:-} ${MAKEJ_WORLD:-} ${MAKE_CONF} NO_CTF=yo NO_SHARE=yo NO_CLEAN=yes SRCCONF=${SRC_CONF} TARGET=${ARCH} TARGET_ARCH=${ARCH} LOADER_ZFS_SUPPORT=YES"
+makeargs="${MAKEOPT:-} ${MAKEJ_WORLD:-} ${MAKE_CONF} NO_CTF=yo NO_SHARE=yo NO_CLEAN=yes SRCCONF=${SRC_CONF} TARGET=${ARCH} TARGET_ARCH=${ARCH}"
 
 if [ "$ARCH" = "mips" ]; then
 	echo ">>> Building includes for ${ARCH} architecture..."
