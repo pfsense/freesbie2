@@ -84,7 +84,7 @@ extra:	.done_extra
 	@mv ${CANONICALOBJDIR}/.tmp_extra ${CANONICALOBJDIR}/.done_extra
 
 clonefs: .done_clonefs
-.done_clonefs: .done_installkernel .done_pkginstall .done_extra
+.done_clonefs: .done_pkginstall .done_extra
 	@-rm -f ${CANONICALOBJDIR}/.tmp_clonefs
 	@touch ${CANONICALOBJDIR}/.tmp_clonefs
 	@sh ${.CURDIR}/scripts/launch.sh ${.CURDIR} clonefs ${CANONICALOBJDIR}/.tmp_clonefs
