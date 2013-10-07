@@ -20,7 +20,7 @@ PFSPFSPKGFILE=${PFSPFSPKGFILE:-${LOCALDIR}/packages};
 
 # Check if there are packages installed on the system
 check_pkgs() {
-    count=$(pkg_info -Qoa | wc -l)
+    count=$(${PKG_INFO} -a | wc -l)
     if [ ${count} -eq 0 ]; then
 	/usr/bin/dialog --title "FreeSBIE Packages selection" --clear \
 	--msgbox "Sorry, you don't have any packages installed.\n\nPlease install at least the packages you want\nto include in your distribution." 10 50
@@ -39,7 +39,12 @@ create_lists() {
     # Create a different file for each category. Each row in each file
     # will look like:
     # PKGNAME PKGNAME-version    
-    pkg_info -Qoa | awk \
+    if [ -n "${USE_PKGNG}" ]; then
+        CMD="pkg query %n-%v:%o"
+    else
+        CMD="pkg_info -Qoa"
+    fi
+    ${CMD} | awk \
 ' BEGIN { FS=":|/" } 
 { 
     a=$1;
@@ -62,7 +67,11 @@ create_lists() {
 
 	    # pkg_info might fail if the listed package isn't present
 	    set +e
-	    origins=$(pkg_info -QoX "^$(escape_pkg ${pkg})($|-[^-]+$)")
+	    if [ -n "${USE_PKGNG}" ]; then
+	        origins=$(pkg query %n-%v:%o ${pkg})
+	    else
+	        origins=$(pkg_info -QoX "^$(escape_pkg ${pkg})($|-[^-]+$)")
+	    fi
 	    retval=$?
 	    set -e
 	    if [ ${retval} -eq 0 ]; then

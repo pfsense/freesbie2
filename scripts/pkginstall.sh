@@ -54,7 +54,11 @@ find_origins() {
 
 	# pkg_info might fail if the listed package isn't present
 	set +e
-	origins=$(pkg_info -EX "^$(escape_pkg ${pkg})($|-[^-]+$)")
+	if [ -n "${USE_PKGNG}" ]; then
+		origins=$(pkg query %n-%v ${pkg})
+	else
+		origins=$(pkg_info -EX "^$(escape_pkg ${pkg})($|-[^-]+$)")
+	fi
 	retval=$?
 	set -e
 	if [ ${retval} -eq 0 ]; then
@@ -86,7 +90,11 @@ find_deps() {
     touch deps
     echo -n ">>> Finding dependencies... "
     while read pkg; do
-	deps=$(pkg_info -qr ${pkg} | cut -d ' ' -f 2)
+	if [ -n "${USE_PKGNG}" ]; then
+		deps=$(pkg query %dn-%dv ${pkg})
+	else
+		deps=$(pkg_info -qr ${pkg} | cut -d ' ' -f 2)
+	fi
 	for dep in ${deps}; do
 	    echo ${dep} >> tmp_deps
 	done      
@@ -144,11 +152,24 @@ copy_packages() {
     export PACKAGE_BUILDING=yo
     chrootpkgpath=${CHROOTWD#$BASEDIR}
     pkgfile=${WORKDIR}/sortpkg
-    pkgaddcmd="chroot ${BASEDIR} pkg_add -fv"
+    pkgaddcmd="chroot ${BASEDIR} ${PKG_ADD}"
     totpkg=$(wc -l $pkgfile | awk '{print $1}')
     echo ">>> Copying ${totpkg} packages"
+    [ -d ${CHROOTWD} ] || mkdir -p ${CHROOTWD}
     cd ${CHROOTWD}
     set +e
+
+    if [ -n "${USE_PKGNG}" ]; then
+        echo ">>> Bootstraping pkgng" >> ${LOGFILE}
+        pkg_version=`pkg query %n-%v pkg`
+        pkg create -o ${CHROOTWD} ${pkg_version} >> ${LOGFILE} 2>&1
+        tar xfO ${CHROOTWD}/${pkg_version}.txz \*/pkg-static > ${CHROOTWD}/pkg-static 2>/dev/null
+        chmod 0755 ${CHROOTWD}/pkg-static
+        chroot ${BASEDIR} ${chrootpkgpath}/pkg-static add -f ${chrootpkgpath}/${pkg_version}.txz >> ${LOGFILE} 2>&1
+        rm -f ${CHROOTWD}/pkg-static
+        rm -f ${CHROOTWD}/${pkg_version}.txz
+    fi
+
     echo -n "[0"
     count=1
     while read pkg; do
@@ -160,22 +181,35 @@ copy_packages() {
 	fi
 	count=$((${count} + 1))
 
-	echo ">>> Running pkg_create -b ${pkg} ${CHROOTWD}/${pkg}.tar" >> ${LOGFILE}
-	pkg_create -b ${pkg} ${CHROOTWD}/${pkg}.tar >> ${LOGFILE} 2>&1
+        if [ -n "${USE_PKGNG}" ]; then
+            echo ">>> Running pkg create -o ${CHROOTWD} ${pkg}" >> ${LOGFILE}
+            pkg create -o ${CHROOTWD} ${pkg} >> ${LOGFILE} 2>&1
+        else
+            echo ">>> Running pkg_create -b ${pkg} ${CHROOTWD}/${pkg}.tar" >> ${LOGFILE}
+            pkg_create -b ${pkg} ${CHROOTWD}/${pkg}.tar >> ${LOGFILE} 2>&1
 
-	echo ">>> Running $pkgaddcmd ${chrootpkgpath}/${pkg}.tar" >> ${LOGFILE}
-	$pkgaddcmd ${chrootpkgpath}/${pkg}.tar >> ${LOGFILE} 2>&1
+            echo ">>> Running $pkgaddcmd ${chrootpkgpath}/${pkg}.tar" >> ${LOGFILE}
+            $pkgaddcmd ${chrootpkgpath}/${pkg}.tar >> ${LOGFILE} 2>&1
 
-	rm ${CHROOTWD}/${pkg}.tar
+            rm ${CHROOTWD}/${pkg}.tar
+        fi
 
     done < $pkgfile
+
+    if [ -n "${USE_PKGNG}" ]; then
+        echo ">>> Installing all packages from ${chrootpkgpath}" >> ${LOGFILE}
+        ${pkgaddcmd} `(cd ${BASEDIR} && ls -1 .${chrootpkgpath}/*.txz)` >> ${LOGFILE} 2>&1
+
+        rm -f ${CHROOTWD}/*.txz
+    fi
+
     echo "]"
     set -e
 }
 
 delete_old_packages() {
     echo ">>> Deleting previously installed packages"
-    chroot ${BASEDIR} pkg_delete -a >> ${LOGFILE} 2>&1
+    chroot ${BASEDIR} ${PKG_DELETE} -f -a >> ${LOGFILE} 2>&1
 }
 
 # Deletes workdirs

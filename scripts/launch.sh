@@ -54,6 +54,21 @@ if [ ! -z "${ARCH:-}" ]; then
 	ARCH=${ARCH:-`uname -p`}
 fi
 
+# Detect if we are using pkgng
+if [ -f /usr/sbin/pkg_add ]; then
+	unset USE_PKGNG
+	export PKG_INSTALL="pkg_add -r"
+	export PKG_ADD="pkg_add -fv"
+	export PKG_INFO="pkg_info"
+	export PKG_DELETE="pkg_delete"
+else
+	export USE_PKGNG=yes
+	export PKG_INSTALL="pkg install -y"
+	export PKG_ADD="pkg add -f"
+	export PKG_INFO="pkg info"
+	export PKG_DELETE="pkg delete"
+fi
+
 # Some variables can be passed to make only as environment, not as parameters.
 # usage: env $MAKE_ENV make $makeargs
 MAKE_ENV=${MAKE_ENV:-}

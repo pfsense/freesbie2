@@ -28,8 +28,8 @@ if [ $? -ne 0 ]; then
     if [ -f /usr/ports/sysutils/cdrtools/Makefile ]; then
 	cd /usr/ports/sysutils/cdrtools && make install BATCH=yes && make clean
     else
-	if ! pkg_add -r cdrtools; then
-	    echo "Could not get it via pkg_add - please go install this"
+	if ! ${PKG_INSTALL} cdrtools; then
+	    echo "Could not get it via ${PKG_INSTALL} - please go install this"
 	    echo "from the ports collection and run this script again."
 	    exit 2
 	fi
