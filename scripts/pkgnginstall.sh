@@ -43,7 +43,7 @@ escape_pkg() {
 find_origins() {
     cd ${WORKDIR}
     touch origins
-    echo -n ">>> Finding origins... "
+    echo -n ">>> Finding origins... " >> ${LOGFILE}
     while read row; do
 	if [ -z "${row}" ]; then continue; fi
 	set +e
@@ -63,31 +63,38 @@ find_origins() {
 		echo ${origin} >> tmp_origins
 	    done
 	else
-	    echo
-	    echo "Warning! Package \"${pkg}\" is listed"
+	    echo 
+	    echo "Warning! Package \"${pkg}\" is listed" 
 	    echo "in ${PFSPKGFILE},"
 	    echo "but is not present in your system. "
 	    echo "Press CTRL-C in ten seconds if you want"
 	    echo "to stop now or I'll continue anyway"
+	    echo " " >> ${LOGFILE}
+	    echo "Warning! Package \"${pkg}\" is listed" >> ${LOGFILE}
+	    echo "in ${PFSPKGFILE}," >> ${LOGFILE}
+	    echo "but is not present in your system. " >> ${LOGFILE}
+	    echo "Press CTRL-C in ten seconds if you want" >> ${LOGFILE}
+	    echo "to stop now or I'll continue anyway" >> ${LOGFILE}
 	    sleep 10
 	fi
     done < ${PFSPKGFILE}
     if [ -f tmp_origins ]; then
 	sort -u tmp_origins > origins
 	tot=$(wc -l origins | awk '{print $1}')
-	echo "${tot} found"
+	echo "${tot} found" >> ${LOGFILE}
     else
-	echo "none found"
+	echo "none found" >> ${LOGFILE}
     fi
 }
 
 find_deps() {
     cd ${WORKDIR}
     touch deps
-    echo -n ">>> Finding dependencies... "
+    echo -n ">>> Finding dependencies... " >> ${LOGFILE}
     while read pkg; do
 	deps=$(pkg info -qr ${pkg})
 	for dep in ${deps}; do
+	    echo ">>>>> Dependency ${dep} found... " >> ${LOGFILE}
 	    echo ${dep} >> tmp_deps
 	done      
 	
@@ -96,9 +103,9 @@ find_deps() {
     if [ -f tmp_deps ]; then
 	sort -u tmp_deps > deps
 	tot=$(wc -l deps | awk '{print $1}')
-	echo "${tot} found"
+	echo "${tot} found" >> ${LOGFILE}
     else
-	echo "none found"
+	echo "none found" >> ${LOGFILE}
     fi
 }
 
@@ -118,7 +125,7 @@ sort_packages() {
     }
 
     totpkg=$(wc -l $pkgfile | awk '{print $1}')
-    echo -n ">>> Sorting ${totpkg} packages by dependencies... "
+    echo -n ">>> Sorting ${totpkg} packages by dependencies... " >> ${LOGFILE}
 
     touch $presortfile
     for i in $(cat $pkgfile); do
@@ -137,7 +144,7 @@ sort_packages() {
     
     tsort $presortfile | grep -v '^NULL$' > $sortfile
 
-    echo "done."
+    echo "done." >> ${LOGFILE}
 }
 
 copy_packages() {
@@ -146,17 +153,17 @@ copy_packages() {
     pkgfile=${WORKDIR}/sortpkg
     pkgaddcmd="pkg -c ${BASEDIR} add -f"
     totpkg=$(wc -l $pkgfile | awk '{print $1}')
-    echo ">>> Copying ${totpkg} packages"
+    echo ">>> Copying ${totpkg} packages" >> ${LOGFILE}
     cd ${CHROOTWD}
     set +e
-    echo -n "[0"
+    echo -n "[0" >> ${LOGFILE}
     count=1
     while read pkg; do
 	# Progress bar
 	if [ $((${count} % 10)) -eq 0 ]; then
-	    echo -n ${count}
+	    echo -n ${count} >> ${LOGFILE}
 	else
-	    echo -n "."
+	    echo -n "." >> ${LOGFILE}
 	fi
 	count=$((${count} + 1))
 
@@ -169,12 +176,12 @@ copy_packages() {
 	rm ${CHROOTWD}/${pkg}.txz
 
     done < $pkgfile
-    echo "]"
+    echo "]" >> ${LOGFILE}
     set -e
 }
 
 delete_old_packages() {
-    echo ">>> Deleting previously installed packages"
+    echo ">>> Deleting previously installed packages" >> ${LOGFILE}
     chroot ${BASEDIR} pkg delete -a >> ${LOGFILE} 2>&1
 }
 
@@ -186,7 +193,7 @@ purge_wd() {
 
 trap "purge_wd && exit 1" INT
 
-echo ">>> Installing packages listed in ${PFSPKGFILE}"
+echo ">>> Installing packages listed in ${PFSPKGFILE}" >> ${LOGFILE}
 find_origins
 
 if [ "$(wc -l ${WORKDIR}/origins | awk '{print $1}')" = "0" ]; then
