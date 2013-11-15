@@ -76,6 +76,13 @@ pkginstall: .done_pkginstall
 	@sh ${.CURDIR}/scripts/launch.sh ${.CURDIR} pkginstall ${CANONICALOBJDIR}/.tmp_pkginstall
 	@mv ${CANONICALOBJDIR}/.tmp_pkginstall ${CANONICALOBJDIR}/.done_pkginstall
 
+pkgnginstall: .done_pkgnginstall
+.done_pkgnginstall: .done_installworld
+	@-rm -f ${CANONICALOBJDIR}/.tmp_pkgnginstall
+	@touch ${CANONICALOBJDIR}/.tmp_pkgnginstall
+	@sh ${.CURDIR}/scripts/launch.sh ${.CURDIR} pkgnginstall ${CANONICALOBJDIR}/.tmp_pkgnginstall
+	@mv ${CANONICALOBJDIR}/.tmp_pkgnginstall ${CANONICALOBJDIR}/.done_pkgnginstall
+
 extra:	.done_extra
 .done_extra: .done_installworld
 	@-rm -f ${CANONICALOBJDIR}/.tmp_extra
