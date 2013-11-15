@@ -92,7 +92,7 @@ find_deps() {
     touch deps
     echo -n ">>> Finding dependencies... " >> ${LOGFILE}
     while read pkg; do
-	deps=$(pkg info -qr ${pkg})
+	deps=$(pkg info -qd ${pkg})
 	for dep in ${deps}; do
 	    echo ">>>>> Dependency ${dep} found... " >> ${LOGFILE}
 	    echo ${dep} >> tmp_deps
