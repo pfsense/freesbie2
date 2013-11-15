@@ -163,7 +163,7 @@ copy_packages() {
 	echo ">>> Running pkg create -o ${CHROOTWD} ${pkg}" >> ${LOGFILE}
 	pkg create -o ${CHROOTWD} ${pkg} >> ${LOGFILE} 2>&1
 
-	echo ">>> Running $pkgaddcmd ${chrootpkgpath}/${pkg}.tar" >> ${LOGFILE}
+	echo ">>> Running $pkgaddcmd ${chrootpkgpath}/${pkg}.txz" >> ${LOGFILE}
 	$pkgaddcmd ${pkg}.txz >> ${LOGFILE} 2>&1
 
 	rm ${CHROOTWD}/${pkg}.txz
