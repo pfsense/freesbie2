@@ -32,12 +32,16 @@ TARGET=$1;
 shift;
 
 # Set LOGFILE. If it's a tmp file, schedule for deletion
-if [ -n "${1:-}" ]; then
-    LOGFILE=$1
-    REMOVELOG=0
+if [ -z "${LOGFILE}" ]; then
+	if [ -n "${1:-}" ]; then
+    		LOGFILE=$1
+    		REMOVELOG=0
+	else
+    		LOGFILE=$(mktemp -q /tmp/freesbie.XXXXXX)
+    		REMOVELOG=1
+	fi
 else
-    LOGFILE=$(mktemp -q /tmp/freesbie.XXXXXX)
-    REMOVELOG=1
+	REMOVELOG=0
 fi
 
 cd $CURDIR
