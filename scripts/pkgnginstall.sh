@@ -129,8 +129,7 @@ sort_packages() {
 
     touch $presortfile
     for i in $(cat $pkgfile); do
-	if [ -e /var/db/pkg/$i/+REQUIRED_BY ]; then	    
-	    for j in $(cat /var/db/pkg/$i/+REQUIRED_BY); do
+    	for j in $(pkg info -rq $i); do
 		if grep -q ^${j}\$ $pkgfile; then
 		    echo $i $j >> $presortfile
 		else
