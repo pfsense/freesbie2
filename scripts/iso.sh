@@ -27,6 +27,12 @@ if [ $? -ne 0 ]; then
     echo The cdrtools port is not installed.  Trying to get it now.
     if [ -f /usr/ports/sysutils/cdrtools/Makefile ]; then
 	cd /usr/ports/sysutils/cdrtools && make install BATCH=yes && make clean
+    elif [ $FREEBSD_VERSION -ge 10 ]; then
+    	if ! pkg install cdrtools; then
+	    echo "Could not get it via pkg install - please go install this"
+	    echo "from the ports collection and run this script again."
+	    exit 2
+	fi
     else
 	if ! pkg_add -r cdrtools; then
 	    echo "Could not get it via pkg_add - please go install this"
