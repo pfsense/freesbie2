@@ -130,7 +130,7 @@ sort_packages() {
     touch $presortfile
     for i in $(cat $pkgfile); do
     	$_REQUIREDPKG=`pkg info -rq $i`
-    	$_COUNG_DEP=`wc -l | $_REQUIREDPKG`
+    	$_COUNG_DEP=`echo $_REQUIREDPKG | wc -l`
     	if [ $_COUNG_DEP -gt 0 ]; then
     	    for j in $_REQUIREDPKG; do
 		if grep -q ^${j}\$ $pkgfile; then
