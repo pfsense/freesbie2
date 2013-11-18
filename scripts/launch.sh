@@ -32,7 +32,7 @@ TARGET=$1;
 shift;
 
 # Set LOGFILE. If it's a tmp file, schedule for deletion
-if [ -z "${LOGFILE}" ]; then
+if [ -z "${LOGFILE:-}" ]; then
 	if [ -n "${1:-}" ]; then
     		LOGFILE=$1
     		REMOVELOG=0
