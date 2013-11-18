@@ -19,7 +19,7 @@ CUSTOMROOT=${CUSTOMROOT:-extra/customroot}
 
 cd ${CUSTOMROOT}
 
-if [ "$FREEBSD_VERSION" = "8" ]; then
+if [ "$FREEBSD_VERSION" -ge "8" ]; then
 	tar cf - * | ( cd /$BASEDIR; tar xfp -)
 	set +e
 	find $BASEDIR -name README -exec rm {} \;
