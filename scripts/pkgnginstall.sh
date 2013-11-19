@@ -34,7 +34,6 @@ if [ "${ARCH}" != "$(uname -p)" ]; then
 fi
 
 WORKDIR=$(mktemp -d -t freesbie)
-CHROOTWD=$(TMPDIR=${BASEDIR}/tmp mktemp -d -t freesbie)
 
 escape_pkg() {
     echo $1 | sed 's/\+/\\\+/'
@@ -119,11 +118,6 @@ sort_packages() {
     [ -f $sortfile ] && rm $sortfile 
     touch $sortfile
 
-    count() {
-        file=$1;
-        echo $(wc -l ${file} | awk '{print $1}')
-    }
-
     totpkg=$(wc -l $pkgfile | awk '{print $1}')
     echo -n ">>> Sorting ${totpkg} packages by dependencies... " >> ${LOGFILE}
 
@@ -152,31 +146,22 @@ sort_packages() {
 
 copy_packages() {
     export PACKAGE_BUILDING=yo
-    chrootpkgpath=${CHROOTWD#$BASEDIR}
+    chrootpkgpath="${BASEDIR}/${WORKDIR}"
     pkgfile=${WORKDIR}/sortpkg
     pkgaddcmd="pkg -c ${BASEDIR} add -f"
     totpkg=$(wc -l $pkgfile | awk '{print $1}')
     echo ">>> Copying ${totpkg} packages" >> ${LOGFILE}
-    cd ${CHROOTWD}
+    mkdir -p ${chrootpkgpath}
+    
     set +e
-    echo -n "[0" >> ${LOGFILE}
-    count=1
     while read pkg; do
-	# Progress bar
-	if [ $((${count} % 10)) -eq 0 ]; then
-	    echo -n ${count} >> ${LOGFILE}
-	else
-	    echo -n "." >> ${LOGFILE}
-	fi
-	count=$((${count} + 1))
-
-	echo ">>> Running pkg create -o ${CHROOTWD} ${pkg}" >> ${LOGFILE}
-	pkg create -o ${CHROOTWD} ${pkg} >> ${LOGFILE} 2>&1
+	echo ">>> Running pkg create -o ${chrootpkgpath} ${pkg}" >> ${LOGFILE}
+	pkg create -o ${chrootpkgpath} -f txz ${pkg} >> ${LOGFILE} 2>&1
 
 	echo ">>> Running $pkgaddcmd ${chrootpkgpath}/${pkg}.txz" >> ${LOGFILE}
-	$pkgaddcmd ${pkg}.txz >> ${LOGFILE} 2>&1
+	$pkgaddcmd ${chrootpkgpath}/${pkg}.txz >> ${LOGFILE} 2>&1
 
-	rm ${CHROOTWD}/${pkg}.txz
+	rm ${chrootpkgpath}/${pkg}.txz
 
     done < $pkgfile
     echo "]" >> ${LOGFILE}
@@ -185,7 +170,7 @@ copy_packages() {
 
 delete_old_packages() {
     echo ">>> Deleting previously installed packages" >> ${LOGFILE}
-    chroot ${BASEDIR} pkg delete -a >> ${LOGFILE} 2>&1
+    ${BASEDIR} pkg -c ${BASEDIR} delete -a >> ${LOGFILE} 2>&1
 }
 
 # Deletes workdirs
