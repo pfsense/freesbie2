@@ -158,8 +158,8 @@ copy_packages() {
 	echo ">>> Running pkg create -o ${chrootpkgpath} ${pkg}" >> ${LOGFILE}
 	pkg create -o ${chrootpkgpath} -f txz ${pkg} >> ${LOGFILE} 2>&1
 
-	echo ">>> Running $pkgaddcmd ${chrootpkgpath}/${pkg}.txz" >> ${LOGFILE}
-	$pkgaddcmd ${chrootpkgpath}/${pkg}.txz >> ${LOGFILE} 2>&1
+	echo ">>> Running $pkgaddcmd ${WORKDIR}/${pkg}.txz" >> ${LOGFILE}
+	$pkgaddcmd ${WORKDIR}/${pkg}.txz >> ${LOGFILE} 2>&1
 
 	rm ${chrootpkgpath}/${pkg}.txz
 
