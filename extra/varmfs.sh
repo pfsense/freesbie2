@@ -23,8 +23,7 @@ chmod 555 ${BASEDIR}/etc/rc.d/varmfs
 mtree -Pcp ${BASEDIR}/var > ${TMPFILE}
 mv ${TMPFILE} ${BASEDIR}/etc/mtree/var.dist
 
-if [ $FREEBSD_VERSION -ge 8 ]; then
-    pkg -c ${BASEDIR} info > ${BASEDIR}/pkg_info.txt 2> /dev/null
-else
-    chroot ${BASEDIR} pkg_info > ${BASEDIR}/pkg_info.txt 2>/dev/null
-fi
+pkg -c ${BASEDIR} info > ${BASEDIR}/pkg_info.txt 2> /dev/null || \
+  (echo "pkg not on this system, falling back to pkg_info" && \
+  chroot ${BASEDIR} pkg_info > ${BASEDIR}/pkg_info.txt 2>/dev/null)
+
