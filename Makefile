@@ -21,6 +21,12 @@ CANONICALOBJDIR:=${MAKEOBJDIRPREFIX}${.CURDIR}
 CANONICALOBJDIR:=/usr/obj${.CURDIR}
 .endif
 
+.if ${FREEBSD_VERSION} < 9
+pkgtarget=pkginstall
+.else
+pkgtarget=pkgnginstall
+.endif
+
 all: freesbie
 
 freesbie: iso
@@ -91,7 +97,7 @@ extra:	.done_extra
 	@mv ${CANONICALOBJDIR}/.tmp_extra ${CANONICALOBJDIR}/.done_extra
 
 clonefs: .done_clonefs
-.done_clonefs: .done_pkginstall .done_extra
+.done_clonefs: ${pkgtarget} .done_extra
 	@-rm -f ${CANONICALOBJDIR}/.tmp_clonefs
 	@touch ${CANONICALOBJDIR}/.tmp_clonefs
 	@sh ${.CURDIR}/scripts/launch.sh ${.CURDIR} clonefs ${CANONICALOBJDIR}/.tmp_clonefs
