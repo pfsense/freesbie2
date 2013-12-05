@@ -31,13 +31,14 @@ if [ -z "${SRC_CONF:-}" ]; then
 		SRC_CONF=${LOCALDIR}/conf/src.conf
     fi
 fi
+echo ">>> Setting SRC_CONF to $SRC_CONF" | tee -a ${LOGFILE}
 
 # Set __MAKE_CONF variable if it's not already set.
 if [ -z "${MAKE_CONF:-}" ]; then
         MAKE_CONF=""
 else
         MAKE_CONF="__MAKE_CONF=$MAKE_CONF"
-        echo ">>> Setting MAKE_CONF to $MAKE_CONF"
+        echo ">>> Setting MAKE_CONF to $MAKE_CONF" | tee -a ${LOGFILE}
 fi
 
 mkdir -p ${BASEDIR}
@@ -46,7 +47,7 @@ cd ${SRCDIR}
 
 makeargs="${MAKEOPT:-} ${MAKEJ_WORLD:-} ${MAKE_CONF} SRCCONF=${SRC_CONF} TARGET_ARCH=${ARCH} DESTDIR=${BASEDIR}"
 
-echo ">>> FreeSBIe2 is running the command: env $MAKE_ENV script -aq $LOGFILE make ${makeargs:-} installworld" > ${BUILDER_LOGS}/freesbie2/freesbie_installworld_cmd.txt
+echo ">>> FreeSBIe2 is running the command: env $MAKE_ENV script -aq $LOGFILE make ${makeargs:-} installworld" | tee -a ${LOGFILE}
 
 # make installworld
 (env "$MAKE_ENV" script -aq $LOGFILE make ${makeargs:-} installworld || print_error;) | egrep '^>>>'
@@ -55,7 +56,7 @@ makeargs="${MAKEOPT:-} SRCCONF=${SRC_CONF} TARGET_ARCH=${ARCH} DESTDIR=${BASEDIR
 
 set +e
 
-echo ">>> FreeSBIe2 is running the command: env $MAKE_ENV script -aq $LOGFILE make ${makeargs:-} distribution"  > ${BUILDER_LOGS}/freesbie2/freesbie_installworld_distribution_cmd.txt
+echo ">>> FreeSBIe2 is running the command: env $MAKE_ENV script -aq $LOGFILE make ${makeargs:-} distribution"  | tee -a ${LOGFILE}
 
 # make distribution
 (env "$MAKE_ENV" script -aq $LOGFILE make ${makeargs:-} distribution || print_error;) | egrep '^>>>'
