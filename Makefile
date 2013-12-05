@@ -39,11 +39,11 @@ obj: .done_objdir
 	@if ! test -d ${CANONICALOBJDIR}/; then \
 		mkdir -p ${CANONICALOBJDIR}; \
 		if ! test -d ${CANONICALOBJDIR}/; then \
-			${ECHO} "Unable to create ${CANONICALOBJDIR}."; \
+			${ECHO} ">>> Unable to create ${CANONICALOBJDIR}."; \
 			exit 1; \
 		fi; \
 	fi
-	${ECHO} "Setting CANONICALOBJDIR to ${CANONICALOBJDIR}."
+	${ECHO} ">>> Setting CANONICALOBJDIR to ${CANONICALOBJDIR}."
 	@if ! test -f .done_objdir; then \
 		touch ${CANONICALOBJDIR}/.done_objdir; \
 	fi
@@ -52,18 +52,18 @@ buildworld: .done_buildworld
 .done_buildworld: .done_objdir
 	@-rm -f ${CANONICALOBJDIR}/.tmp_buildworld
 	@touch ${CANONICALOBJDIR}/.tmp_buildworld
-	${ECHO} "Starting buildworld."
+	${ECHO} ">>> Starting buildworld."
 	@sh ${.CURDIR}/scripts/launch.sh ${.CURDIR} buildworld ${CANONICALOBJDIR}/.tmp_buildworld
-	${ECHO} "Finished buildworld."
+	${ECHO} ">>> Finished buildworld."
 	@mv ${CANONICALOBJDIR}/.tmp_buildworld ${CANONICALOBJDIR}/.done_buildworld
 
 installworld: .done_installworld
 .done_installworld: .done_buildworld
 	@-rm -f ${CANONICALOBJDIR}/.tmp_installworld
 	@touch ${CANONICALOBJDIR}/.tmp_installworld
-	${ECHO} "Starting installworld."
+	${ECHO} ">>> Starting installworld."
 	@sh ${.CURDIR}/scripts/launch.sh ${.CURDIR} installworld ${CANONICALOBJDIR}/.tmp_installworld
-	${ECHO} "Finished installworld."
+	${ECHO} ">>> Finished installworld."
 	@mv ${CANONICALOBJDIR}/.tmp_installworld ${CANONICALOBJDIR}/.done_installworld
 
 buildkernel: .done_buildkernel
@@ -91,9 +91,9 @@ pkgnginstall: .done_pkgnginstall
 .done_pkgnginstall: .done_installworld
 	@-rm -f ${CANONICALOBJDIR}/.tmp_pkgnginstall
 	@touch ${CANONICALOBJDIR}/.tmp_pkgnginstall
-	${ECHO} "Started installworld."
+	${ECHO} ">>> Started pkgnginstall."
 	@sh ${.CURDIR}/scripts/launch.sh ${.CURDIR} pkgnginstall ${CANONICALOBJDIR}/.tmp_pkgnginstall
-	${ECHO} "Finished pkgnginstall."
+	${ECHO} ">>> Finished pkgnginstall."
 	@mv ${CANONICALOBJDIR}/.tmp_pkgnginstall ${CANONICALOBJDIR}/.done_pkgnginstall
 
 extra:	.done_extra
