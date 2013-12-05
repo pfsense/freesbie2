@@ -36,7 +36,7 @@ fi
 WORKDIR=$(mktemp -d -t freesbie)
 
 prepare_environment() {
-	rm -r /var/db/pkg
+	rm -r ${PFSENSEBASEDIR}/var/db/pkg
 	cp /var/db/pkg ${PFSENSEBASEDIR}/var/db	
 }
 
