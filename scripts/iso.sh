@@ -62,7 +62,7 @@ fi
 echo ">>> Running mkisofs..."
 
 
-echo ">>> FreeSBIe2 is running the command: cd ${CLONEDIR} ; mkisofs -b boot/cdboot -no-emul-boot -J -r -ldots -l ${LOPT} -V ${FREESBIE_LABEL} -p FreeSBIE -o $ISOPATH ." > /tmp/freesbie_cd_builder.txt
+echo ">>> FreeSBIe2 is running the command: cd ${CLONEDIR} ; mkisofs -b boot/cdboot -no-emul-boot -J -r -ldots -l ${LOPT} -V ${FREESBIE_LABEL} -p FreeSBIE -o $ISOPATH ." > ${BUILDER_LOGS}/freesbie2/freesbie_cd_builder.txt
 
 mkisofs -b boot/cdboot -no-emul-boot -J -r -ldots -l ${LOPT} -V ${FREESBIE_LABEL} -p pfSense -o $ISOPATH .
 
