@@ -46,7 +46,7 @@ cd ${SRCDIR}
 
 makeargs="${MAKEOPT:-} ${MAKEJ_WORLD:-} ${MAKE_CONF} SRCCONF=${SRC_CONF} TARGET_ARCH=${ARCH} DESTDIR=${BASEDIR}"
 
-echo ">>> FreeSBIe2 is running the command: env $MAKE_ENV script -aq $LOGFILE make ${makeargs:-} installworld" > /tmp/freesbie_installworld_cmd.txt
+echo ">>> FreeSBIe2 is running the command: env $MAKE_ENV script -aq $LOGFILE make ${makeargs:-} installworld" > ${BUILDER_LOGS}/freesbie2/freesbie_installworld_cmd.txt
 
 # make installworld
 (env "$MAKE_ENV" script -aq $LOGFILE make ${makeargs:-} installworld || print_error;) | egrep '^>>>'
@@ -55,7 +55,7 @@ makeargs="${MAKEOPT:-} SRCCONF=${SRC_CONF} TARGET_ARCH=${ARCH} DESTDIR=${BASEDIR
 
 set +e
 
-echo ">>> FreeSBIe2 is running the command: env $MAKE_ENV script -aq $LOGFILE make ${makeargs:-} distribution"  > /tmp/freesbie_installworld_distribution_cmd.txt
+echo ">>> FreeSBIe2 is running the command: env $MAKE_ENV script -aq $LOGFILE make ${makeargs:-} distribution"  > ${BUILDER_LOGS}/freesbie2/freesbie_installworld_distribution_cmd.txt
 
 # make distribution
 (env "$MAKE_ENV" script -aq $LOGFILE make ${makeargs:-} distribution || print_error;) | egrep '^>>>'
