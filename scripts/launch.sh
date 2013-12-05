@@ -44,6 +44,7 @@ else
 	REMOVELOG=0
 fi
 
+echo ">>> LOGFILE set to $LOGFILE. REMOVELOG is $REMOVELOG." | tee -a ${LOGFILE}
 cd $CURDIR
 
 . ./conf/freesbie.defaults.conf
@@ -65,6 +66,8 @@ MAKE_ENV=${MAKE_ENV:-}
 if [ ! -z ${MAKEOBJDIRPREFIX:-} ]; then
     MAKE_ENV="$MAKE_ENV MAKEOBJDIRPREFIX=${MAKEOBJDIRPREFIX}"
 fi
+
+echo ">>> MAKE_ENV set on launch.sh to $MAKE_ENV" | tee -a ${LOGFILE}
 
 report_error() {
     if [ ! -z ${FREESBIE_ERROR_MAIL:-} ]; then
