@@ -30,13 +30,14 @@ if [ -z "${SRC_CONF:-}" ]; then
 		SRC_CONF=${LOCALDIR}/conf/make.conf
     fi
 fi
+echo ">>> Setting SRc_CONF to $SRC_CONF" | tee -a ${LOGFILE}
 
 # Set __MAKE_CONF variable if it's not already set.
 if [ -z "${MAKE_CONF:-}" ]; then
 	MAKE_CONF=""
 else
 	MAKE_CONF="__MAKE_CONF=$MAKE_CONF"
-	echo ">>> Setting MAKE_CONF to $MAKE_CONF"
+	echo ">>> Setting MAKE_CONF to $MAKE_CONF" | tee -a ${LOGFILE}
 fi
 
 cd $SRCDIR
@@ -46,14 +47,14 @@ unset EXTRA
 makeargs="${MAKEOPT:-} ${MAKEJ_WORLD:-} ${MAKE_CONF} NO_CTF=yo NO_SHARE=yo NO_CLEAN=yes SRCCONF=${SRC_CONF} TARGET=${ARCH} TARGET_ARCH=${ARCH}"
 
 if [ "$ARCH" = "mips" ]; then
-	echo ">>> Building includes for ${ARCH} architecture..."
+	echo ">>> Building includes for ${ARCH} architecture..." | tee -a ${LOGFILE}
 	make buildincludes 2>&1 >/dev/null
-	echo ">>> Installing includes for ${ARCH} architecture..."
+	echo ">>> Installing includes for ${ARCH} architecture..." | tee -a ${LOGFILE}
 	make installincludes 2>&1 >/dev/null
 fi
 
-echo ">>> Building world for ${ARCH} architecture..."
-echo ">>> FreeSBIe2 is running the command: env $MAKE_ENV script -aq $LOGFILE make ${makeargs:-} buildworld" >> ${BUILDER_LOGS}/freesbie2/freesbie_buildworld_cmd.txt
-(env "$MAKE_ENV" script -aq $LOGFILE make ${makeargs:-} buildworld NO_CTF=yo NO_SHARE=yo NO_CLEAN=yo || print_error;) | egrep '^>>>'
+echo ">>> Building world for ${ARCH} architecture..." | tee -a ${LOGFILE}
+echo ">>> FreeSBIe2 is running the command: env $MAKE_ENV script -aq $LOGFILE make ${makeargs:-} buildworld" | tee -a ${LOGFILE}
+(env "$MAKE_ENV" script -aq $LOGFILE make ${makeargs:-} buildworld NO_CTF=yo NO_SHARE=yo NO_CLEAN=yo || print_error;) | egrep '^>>>' | tee -a ${LOGFILE}
 
 cd $LOCALDIR
