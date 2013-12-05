@@ -78,13 +78,13 @@ unset EXTRA
 makeargs="${MAKEOPT:-} SRCCONF=${SRC_CONF} ${MAKE_CONF} NO_KERNELCLEAN=yes TARGET=${ARCH} TARGET_ARCH=${ARCH} ${DTRACE}"
 
 if [ "$ARCH" = "MIPS" ]; then
-	echo ">>> FreeSBIe2 is running the command: env $MAKE_ENV script -aq $LOGFILE make ${makeargs:-} kernel-toolchain" > /tmp/freesbie_buildworld_cmd.txt
+	echo ">>> FreeSBIe2 is running the command: env $MAKE_ENV script -aq $LOGFILE make ${makeargs:-} kernel-toolchain" > ${BUILDER_LOGS}/freesbie2/freesbie_buildworld_cmd.txt
 	echo ">>> MIPS ARCH deteceted, running make kernel-toolchain ..."
 	(env "$MAKE_ENV" script -aq $LOGFILE make $makeargs kernel-toolchain $MAKEJ_KERNEL || print_error;) | egrep '^>>>'
 fi
 
 echo ">>> FreeSBIe2 is running the command: env $MAKE_ENV script -aq $LOGFILE make $makeargs buildkernel" \
-	> /tmp/freesbie_buildkernel_cmd.txt
+	> ${BUILDER_LOGS}/freesbie2/freesbie_buildkernel_cmd.txt
 
 cd $SRCDIR
 
