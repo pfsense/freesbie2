@@ -17,7 +17,7 @@ fi
 
 FREESBIE_LABEL=${FREESBIE_LABEL:-"FreeSBIE"}
 
-echo ">>> Building bootable ISO image for ${ARCH}"
+echo ">>> Building bootable ISO image for ${ARCH}" | tee -a ${LOGFILE}
 
 # This part was taken from the mkisoimages.sh scripts under
 # /usr/src/release/${ARCH}/
@@ -29,21 +29,21 @@ if [ $? -ne 0 ]; then
 	cd /usr/ports/sysutils/cdrtools && make install BATCH=yes && make clean
     elif [ $FREEBSD_VERSION -ge 10 ]; then
     	if ! pkg install cdrtools; then
-	    echo "Could not get it via pkg install - please go install this"
-	    echo "from the ports collection and run this script again."
+	    echo "Could not get it via pkg install - please go install this" | tee -a ${LOGFILE}
+	    echo "from the ports collection and run this script again." | tee -a ${LOGFILE}
 	    exit 2
 	fi
     else
 	if ! pkg_add -r cdrtools; then
-	    echo "Could not get it via pkg_add - please go install this"
-	    echo "from the ports collection and run this script again."
+	    echo "Could not get it via pkg_add - please go install this" | tee -a ${LOGFILE}
+	    echo "from the ports collection and run this script again." | tee -a ${LOGFILE}
 	    exit 2
 	fi
     fi
 fi
 set -e
 
-echo ">>> Saving mtree structure..."
+echo ">>> Saving mtree structure..." | tee -a ${LOGFILE}
 mtree -Pcp ${CLONEDIR} | bzip2 -9 > root.dist.bz2
 mkdir -p ${CLONEDIR}/dist
 mv root.dist.bz2 ${CLONEDIR}/dist/
@@ -59,14 +59,14 @@ else
 	LOPT="-L"
 fi
 
-echo ">>> Running mkisofs..."
+echo ">>> Running mkisofs..." | tee -a ${LOGFILE}
 
 
-echo ">>> FreeSBIe2 is running the command: cd ${CLONEDIR} ; mkisofs -b boot/cdboot -no-emul-boot -J -r -ldots -l ${LOPT} -V ${FREESBIE_LABEL} -p FreeSBIE -o $ISOPATH ." > ${BUILDER_LOGS}/freesbie2/freesbie_cd_builder.txt
+echo ">>> FreeSBIe2 is running the command: cd ${CLONEDIR} ; mkisofs -b boot/cdboot -no-emul-boot -J -r -ldots -l ${LOPT} -V ${FREESBIE_LABEL} -p FreeSBIE -o $ISOPATH ." | tee -a ${LOGFILE}
 
 mkisofs -b boot/cdboot -no-emul-boot -J -r -ldots -l ${LOPT} -V ${FREESBIE_LABEL} -p pfSense -o $ISOPATH .
 
-echo "ISO created:"
+echo "ISO created:" | tee -a ${LOGFILE}
 
 ls -lh ${ISOPATH}
 
