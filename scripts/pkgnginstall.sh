@@ -89,7 +89,7 @@ find_origins() {
 find_deps() {
     cd ${WORKDIR}
     touch deps
-    echo -n ">>> Finding dependencies... " >> ${LOGFILE}
+    echo ">>> Finding dependencies... " >> ${LOGFILE}
     while read pkg; do
 	deps=$(pkg info -qd ${pkg})
 	for dep in ${deps}; do
@@ -102,9 +102,9 @@ find_deps() {
     if [ -f tmp_deps ]; then
 	sort -u tmp_deps > deps
 	tot=$(wc -l deps | awk '{print $1}')
-	echo "${tot} found" >> ${LOGFILE}
+	echo ">>> Total: ${tot} dependencies found" >> ${LOGFILE}
     else
-	echo "none found" >> ${LOGFILE}
+	echo ">>> No dependencies found" >> ${LOGFILE}
     fi
 }
 
