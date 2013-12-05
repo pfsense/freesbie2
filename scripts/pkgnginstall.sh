@@ -17,7 +17,7 @@ fi
 
 #$BASE_DIR/tools/builder_scripts/packages
 
-PFSPKGFILE=/tmp/pfspackages
+PFSPKGFILE=${PFSPKGFILE:-/tmp/pfspackages}
 
 if [ ! -f ${PFSPKGFILE} ]; then
     return
@@ -52,7 +52,7 @@ escape_pkg() {
 find_origins() {
     cd ${WORKDIR}
     touch origins
-    echo -n ">>> Finding origins... " >> ${LOGFILE}
+    echo -n ">>> Finding origins... " | tee -a ${LOGFILE}
     while read row; do
 	if [ -z "${row}" ]; then continue; fi
 	set +e
@@ -73,33 +73,29 @@ find_origins() {
 	    done
 	else
 	    echo 
-	    echo "Warning! Package \"${pkg}\" is listed" 
-	    echo "in ${PFSPKGFILE},"
-	    echo "but is not present in your system. "
-	    echo "Press CTRL-C in ten seconds if you want"
-	    echo "to stop now or I'll continue anyway"
-	    echo " " >> ${LOGFILE}
-	    echo "Warning! Package \"${pkg}\" is listed" >> ${LOGFILE}
-	    echo "in ${PFSPKGFILE}," >> ${LOGFILE}
-	    echo "but is not present in your system. " >> ${LOGFILE}
-	    echo "Press CTRL-C in ten seconds if you want" >> ${LOGFILE}
-	    echo "to stop now or I'll continue anyway" >> ${LOGFILE}
+	    echo "Warning! Package \"${pkg}\" is listed" | tee -a ${LOGFILE}
+	    echo "in ${PFSPKGFILE}," | tee -a ${LOGFILE}
+	    echo "but is not present in your system. " | tee -a ${LOGFILE}
+	    echo "Press CTRL-C in ten seconds if you want" | tee -a ${LOGFILE}
+	    echo "to stop now or I'll continue anyway" | tee -a ${LOGFILE}
+	    echo " " | tee -a ${LOGFILE}
+
 	    sleep 10
 	fi
     done < ${PFSPKGFILE}
     if [ -f tmp_origins ]; then
 	sort -u tmp_origins > origins
 	tot=$(wc -l origins | awk '{print $1}')
-	echo "${tot} found" >> ${LOGFILE}
+	echo "${tot} found" | tee -a ${LOGFILE}
     else
-	echo "none found" >> ${LOGFILE}
+	echo "none found" | tee -a ${LOGFILE}
     fi
 }
 
 find_deps() {
     cd ${WORKDIR}
     touch deps
-    echo ">>> Finding dependencies... " >> ${LOGFILE}
+    echo ">>> Finding dependencies... " | tee -a ${LOGFILE}
     while read pkg; do
 	deps=$(pkg info -qd ${pkg})
 	for dep in ${deps}; do
@@ -112,9 +108,9 @@ find_deps() {
     if [ -f tmp_deps ]; then
 	sort -u tmp_deps > deps
 	tot=$(wc -l deps | awk '{print $1}')
-	echo ">>> Total: ${tot} dependencies found" >> ${LOGFILE}
+	echo ">>> Total: ${tot} dependencies found" | tee -a ${LOGFILE}
     else
-	echo ">>> No dependencies found" >> ${LOGFILE}
+	echo ">>> No dependencies found" | tee -a ${LOGFILE}
     fi
 }
 
@@ -129,7 +125,7 @@ sort_packages() {
     touch $sortfile
 
     totpkg=$(wc -l $pkgfile | awk '{print $1}')
-    echo -n ">>> Sorting ${totpkg} packages by dependencies... " >> ${LOGFILE}
+    echo -n ">>> Sorting ${totpkg} packages by dependencies... " | tee -a ${LOGFILE}
 
     touch $presortfile
     for i in $(cat $pkgfile); do
@@ -151,7 +147,7 @@ sort_packages() {
     
     tsort $presortfile | grep -v '^NULL$' > $sortfile
 
-    echo "done." >> ${LOGFILE}
+    echo "done." | tee -a ${LOGFILE}
 }
 
 copy_packages() {
@@ -160,7 +156,7 @@ copy_packages() {
     pkgfile=${WORKDIR}/sortpkg
     pkgaddcmd="pkg -c ${BASEDIR} add -f"
     totpkg=$(wc -l $pkgfile | awk '{print $1}')
-    echo ">>> Copying ${totpkg} packages" >> ${LOGFILE}
+    echo ">>> Copying ${totpkg} packages" | tee -a ${LOGFILE}
     mkdir -p ${chrootpkgpath}
     
     set +e
@@ -174,24 +170,24 @@ copy_packages() {
 	rm ${chrootpkgpath}/${pkg}.txz
 
     done < $pkgfile
-    echo "]" >> ${LOGFILE}
+    echo "]" | tee -a ${LOGFILE}
     set -e
 }
 
 delete_old_packages() {
-    echo ">>> Deleting previously installed packages" >> ${LOGFILE}
+    echo ">>> Deleting previously installed packages" | tee -a ${LOGFILE}
     ${BASEDIR} pkg -c ${BASEDIR} delete -a >> ${LOGFILE} 2>&1
 }
 
 # Deletes workdirs
 purge_wd() {
     cd ${LOCALDIR}
-    rm -rf ${WORKDIR} ${BASEDIR}/tmp/freesbie*
+    rm -rf ${WORKDIR} ${BASEDIR}/${WORKDIR}
 }
 
 trap "purge_wd && exit 1" INT
 
-echo ">>> Installing packages listed in ${PFSPKGFILE}" >> ${LOGFILE}
+echo ">>> Installing packages listed in ${PFSPKGFILE}" | tee -a ${LOGFILE}
 find_origins
 
 if [ "$(wc -l ${WORKDIR}/origins | awk '{print $1}')" = "0" ]; then
