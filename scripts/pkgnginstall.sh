@@ -35,6 +35,16 @@ fi
 
 WORKDIR=$(mktemp -d -t freesbie)
 
+prepare_environment() {
+	rm -r /var/db/pkg
+	cp /var/db/pkg ${PFSENSEBASEDIR}/var/db	
+}
+
+cleanup_environment() {
+	rm -r ${PFSENSEBASEDIR}/var/db/pkg
+	mkdir -p ${PFSENSEBASEDIR}/var/db/pkg
+}
+
 escape_pkg() {
     echo $1 | sed 's/\+/\\\+/'
 }
@@ -189,8 +199,10 @@ if [ "$(wc -l ${WORKDIR}/origins | awk '{print $1}')" = "0" ]; then
     return
 fi
 
+prepare_environment
 find_deps
 sort_packages
 #delete_old_packages
 copy_packages
 purge_wd
+cleanup_environment
