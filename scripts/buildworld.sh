@@ -53,7 +53,7 @@ if [ "$ARCH" = "mips" ]; then
 fi
 
 echo ">>> Building world for ${ARCH} architecture..."
-echo ">>> FreeSBIe2 is running the command: env $MAKE_ENV script -aq $LOGFILE make ${makeargs:-} buildworld" >> /tmp/freesbie_buildworld_cmd.txt
+echo ">>> FreeSBIe2 is running the command: env $MAKE_ENV script -aq $LOGFILE make ${makeargs:-} buildworld" >> ${BUILDER_LOGS}/freesbie2/freesbie_buildworld_cmd.txt
 (env "$MAKE_ENV" script -aq $LOGFILE make ${makeargs:-} buildworld NO_CTF=yo NO_SHARE=yo NO_CLEAN=yo || print_error;) | egrep '^>>>'
 
 cd $LOCALDIR
