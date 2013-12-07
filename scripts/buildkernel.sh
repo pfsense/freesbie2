@@ -98,7 +98,7 @@ else
 	COUNTER=9
 fi
 while [ "$COUNTER" -lt 10 ]; do
-	(env "$MAKE_ENV" script -aq $LOGFILE make $makeargs buildkernel $MAKEJ_KERNEL NO_KERNELCLEAN=yo || print_error;) | egrep '^>>>'
+	(env "$MAKE_ENV" script -aq $LOGFILE make $makeargs buildkernel $MAKEJ_KERNEL || print_error;) | egrep '^>>>'
 	if [ "$?" -gt 0 ]; then
 		if [ "$COUNTER" -gt 9 ]; then
 			exit 1
