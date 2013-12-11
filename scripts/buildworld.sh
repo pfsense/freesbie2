@@ -29,10 +29,7 @@ if [ -z "${SRC_CONF:-}" ]; then
     else
 		SRC_CONF=${LOCALDIR}/conf/make.conf
     fi
-else
-	SRC_CONF=${SRC_CONF:C/\.install//g}
 fi
-
 echo ">>> Setting SRc_CONF to $SRC_CONF" | tee -a ${LOGFILE}
 
 # Set __MAKE_CONF variable if it's not already set.
