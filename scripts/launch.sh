@@ -63,8 +63,12 @@ fi
 # usage: env $MAKE_ENV make $makeargs
 MAKE_ENV=${MAKE_ENV:-}
 
-if [ ! -z ${MAKEOBJDIRPREFIX:-} ]; then
+if [ -n ${MAKEOBJDIRPREFIX:-} ]; then
     MAKE_ENV="$MAKE_ENV MAKEOBJDIRPREFIX=${MAKEOBJDIRPREFIX}"
+fi
+
+if [ -n ${MAKEOBJDIR:-} ]; then
+    MAKE_ENV="$MAKE_ENV MAKEOBJDIR=${MAKEOBJDIR}"
 fi
 
 echo ">>> MAKE_ENV set on launch.sh to $MAKE_ENV" | tee -a ${LOGFILE}
