@@ -15,8 +15,8 @@
 #
 # pkgselect:	choose packages to include in the built system (interactive)
 
-.if defined(BUILDER_LOGS)
-CANONICALOBJDIR:=${BUILDER_LOGS}/freesbie2
+.if defined(MAKEOBJDIRPREFIX)
+CANONICALOBJDIR:=${MAKEOBJDIRPREFIX}${.CURDIR}
 .else
 CANONICALOBJDIR:=/usr/obj${.CURDIR}
 .endif
