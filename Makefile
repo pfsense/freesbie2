@@ -44,7 +44,7 @@ obj: .done_objdir
 		fi; \
 	fi
 	@${ECHO} ">>> Setting CANONICALOBJDIR to ${CANONICALOBJDIR}."
-	@if ! test -f .done_objdir; then \
+	@if ! test -f ${CANONICALOBJDIR}/.done_objdir; then \
 		touch ${CANONICALOBJDIR}/.done_objdir; \
 	fi
 
