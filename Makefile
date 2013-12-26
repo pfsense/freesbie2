@@ -93,9 +93,9 @@ pkgnginstall: .done_pkgnginstall
 .done_pkgnginstall: .done_installworld
 	@-rm -f ${CANONICALOBJDIR}/.tmp_pkgnginstall
 	@touch ${CANONICALOBJDIR}/.tmp_pkgnginstall
-	${ECHO} ">>> Started pkgnginstall."
+	@${ECHO} ">>> Started pkgnginstall."
 	@sh ${.CURDIR}/scripts/launch.sh ${.CURDIR} pkgnginstall ${CANONICALOBJDIR}/.tmp_pkgnginstall
-	${ECHO} ">>> Finished pkgnginstall."
+	@${ECHO} ">>> Finished pkgnginstall."
 	@mv ${CANONICALOBJDIR}/.tmp_pkgnginstall ${CANONICALOBJDIR}/.done_pkgnginstall
 
 extra:	.done_extra
