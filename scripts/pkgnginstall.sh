@@ -160,7 +160,17 @@ copy_packages() {
     mkdir -p ${chrootpkgpath}
     
     set +e
+    echo -n "[0"
+    count=1
     while read pkg; do
+	# Progress bar
+	if [ $((${count} % 10)) -eq 0 ]; then
+		echo -n ${count}
+	else
+		echo -n "."
+	fi
+	count=$((count + 1))
+
 	echo ">>> Running pkg create -o ${chrootpkgpath} ${pkg}" >> ${LOGFILE}
 	pkg create -o ${chrootpkgpath} -f txz ${pkg} >> ${LOGFILE} 2>&1
 
