@@ -23,6 +23,10 @@ CANONICALOBJDIR:=${MAKEOBJDIR}
 CANONICALOBJDIR:=/usr/obj${.CURDIR}
 .endif
 
+.if defined(CUSTOM_MAKEOBJDIRPREFIX)
+PRE_LAUNCH=env MAKEOBJDIRPREFIX=${CUSTOM_MAKEOBJDIRPREFIX}
+.endif
+
 .if ${FREEBSD_VERSION} < 9
 pkgtarget=pkginstall
 .else
@@ -55,7 +59,7 @@ buildworld: .done_buildworld
 	@-rm -f ${CANONICALOBJDIR}/.tmp_buildworld
 	@touch ${CANONICALOBJDIR}/.tmp_buildworld
 	@${ECHO} ">>> Starting buildworld."
-	@sh ${.CURDIR}/scripts/launch.sh ${.CURDIR} buildworld ${CANONICALOBJDIR}/.tmp_buildworld
+	@${PRE_LAUNCH} sh ${.CURDIR}/scripts/launch.sh ${.CURDIR} buildworld ${CANONICALOBJDIR}/.tmp_buildworld
 	@${ECHO} ">>> Finished buildworld."
 	@mv ${CANONICALOBJDIR}/.tmp_buildworld ${CANONICALOBJDIR}/.done_buildworld
 
@@ -64,7 +68,7 @@ installworld: .done_installworld
 	@-rm -f ${CANONICALOBJDIR}/.tmp_installworld
 	@touch ${CANONICALOBJDIR}/.tmp_installworld
 	@${ECHO} ">>> Starting installworld."
-	@sh ${.CURDIR}/scripts/launch.sh ${.CURDIR} installworld ${CANONICALOBJDIR}/.tmp_installworld
+	@${PRE_LAUNCH} sh ${.CURDIR}/scripts/launch.sh ${.CURDIR} installworld ${CANONICALOBJDIR}/.tmp_installworld
 	@${ECHO} ">>> Finished installworld."
 	@mv ${CANONICALOBJDIR}/.tmp_installworld ${CANONICALOBJDIR}/.done_installworld
 
@@ -72,14 +76,14 @@ buildkernel: .done_buildkernel
 .done_buildkernel: .done_buildworld
 	@-rm -f ${CANONICALOBJDIR}/.tmp_buildkernel
 	@touch ${CANONICALOBJDIR}/.tmp_buildkernel
-	@sh ${.CURDIR}/scripts/launch.sh ${.CURDIR} buildkernel ${CANONICALOBJDIR}/.tmp_buildkernel
+	@${PRE_LAUNCH} sh ${.CURDIR}/scripts/launch.sh ${.CURDIR} buildkernel ${CANONICALOBJDIR}/.tmp_buildkernel
 	@mv ${CANONICALOBJDIR}/.tmp_buildkernel ${CANONICALOBJDIR}/.done_buildkernel
 
 installkernel: .done_installkernel
 .done_installkernel: .done_buildkernel .done_installworld
 	@-rm -f ${CANONICALOBJDIR}/.tmp_installkernel
 	@touch ${CANONICALOBJDIR}/.tmp_installkernel
-	@sh ${.CURDIR}/scripts/launch.sh ${.CURDIR} installkernel ${CANONICALOBJDIR}/.tmp_installkernel
+	@${PRE_LAUNCH} sh ${.CURDIR}/scripts/launch.sh ${.CURDIR} installkernel ${CANONICALOBJDIR}/.tmp_installkernel
 	@mv ${CANONICALOBJDIR}/.tmp_installkernel ${CANONICALOBJDIR}/.done_installkernel
 
 pkginstall: .done_pkginstall
