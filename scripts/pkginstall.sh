@@ -191,6 +191,7 @@ find_origins
 
 if [ "$(wc -l ${WORKDIR}/origins | awk '{print $1}')" = "0" ]; then
     # Empty packages file, skip.
+    purge_wd
     return
 fi
 
