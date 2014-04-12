@@ -186,7 +186,7 @@ copy_packages() {
 
 delete_old_packages() {
     echo ">>> Deleting previously installed packages" | tee -a ${LOGFILE}
-    ${BASEDIR} pkg -c ${BASEDIR} delete -a >> ${LOGFILE} 2>&1
+    pkg -c ${BASEDIR} delete -a >> ${LOGFILE} 2>&1
 }
 
 # Deletes workdirs
@@ -202,6 +202,7 @@ find_origins
 
 if [ "$(wc -l ${WORKDIR}/origins | awk '{print $1}')" = "0" ]; then
     # Empty packages file, skip.
+    purge_wd
     return
 fi
 
