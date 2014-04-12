@@ -21,9 +21,6 @@ cd ${CUSTOMROOT}
 
 if [ $FREEBSD_VERSION -ge 8 ]; then
 	tar --exclude=\.git -c -f - * | ( cd /$BASEDIR; tar xfp -)
-	set +e
-	find $BASEDIR -name README -exec rm {} \;
-	set -e
 else
 	find . -not -name 'README' -not -path '*CVS*' | \
     	cpio -dump -R 0:0 -v ${BASEDIR} >> ${LOGFILE} 2>&1
